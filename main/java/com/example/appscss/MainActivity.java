@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         View.OnClickListener listener2 = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (email.getText().toString().equals("flaviumircia15@gmail.com") && password.getText().toString().equals("123456"))
+                if (email.getText().toString().equals("") && password.getText().toString().equals(""))
                     openActivity2();
                 else {
                     Toast.makeText(getBaseContext(), "Email sau parola gresita", Toast.LENGTH_LONG).show();
