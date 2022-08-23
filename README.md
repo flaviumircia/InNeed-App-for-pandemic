@@ -1,6 +1,20 @@
 # Android Application for help during the SARS-COV2 pandemic
-This is my application for the "Scientific Communications Session 2021 " in the first year of university.
+My first Android application ever, presented on "Scientific Communications Session 2021 ".
 
 ## About the app
-   The Android Application for Help During the Pandemic was created as a social-oriented app for people that were quarantined 
-(implying no possibility of getting out of the house), so they could connect with others from the app to help them (for things like buying groceries or walking the dog).
+   Not the greatest and totally not finished, but everyone starts from somewhere.
+   
+   The app ("InNeed") should be a social app for the SARS-COV2 lockdown/quarantine, where people that are quaratined could seek for help on the application.
+   
+   Something like delivery app, but with no payment included (basically good old volunteering)
+   
+   Because the time was short and I couldn't do all the features neccessary for the app to work. So I built the an UI that shows your coordinates on the world map.
+  
+     
+## The UI
+   The UI is simplistic (pretty much a lot of grey) with the logo being a Hygieia's symbol (the old greek symbol used in pharmas with the snake and the cup)
+   
+   Contains 3 layouts (the login, sign up and main_map layout)
+   
+   Using osmdroid so independent of the Google services.
+   
