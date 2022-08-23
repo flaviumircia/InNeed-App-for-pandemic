@@ -21,12 +21,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppScss">
-        <activity android:name="com.flaviumircia.android_application_for_help_during_the_pandemic.sign_up"
+        <activity android:name="com.flaviumircia.android_application_for_help_during_the_pandemic.SignUp"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
         </activity>
 
         <activity
-            android:name="com.flaviumircia.android_application_for_help_during_the_pandemic.meniu_map"
+            android:name="com.flaviumircia.android_application_for_help_during_the_pandemic.MeniuMap"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
             android:label="@string/title_activity_meniu_map" />
 

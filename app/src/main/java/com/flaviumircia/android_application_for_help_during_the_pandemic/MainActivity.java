@@ -2,69 +2,51 @@ package com.flaviumircia.android_application_for_help_during_the_pandemic;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.appscss.R;
+import com.flaviumircia.android_application_for_help_during_the_pandemic.data_model.UserModel;
+import com.flaviumircia.android_application_for_help_during_the_pandemic.misc.EditTextToModel;
 
 public class MainActivity extends AppCompatActivity {
     private Button buttonLogin;
     private Button buttonSignup;
     private EditText email;
     private EditText password;
-    private TextView eroare;
-    private int counter = 0;
-
+    private UserModel userModel;
+    private EditTextToModel editTextToModel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
+
         buttonLogin = (Button) findViewById(R.id.buttonLogin);
         buttonSignup = (Button) findViewById(R.id.buttonSignup);
         email = (EditText) findViewById(R.id.emailAdress);
         password = (EditText) findViewById(R.id.password);
-        eroare = (TextView) findViewById(R.id.eroare);
+
+        //transforming edittext to string
+        editTextToModel=new EditTextToModel(email,password);
+        userModel=editTextToModel.getUserModel();
 
 
-        Context coext=getApplicationContext();
-        CharSequence credentials="Email sau parola gresita";
-        int duration=Toast.LENGTH_LONG;
-        View.OnClickListener listener2 = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (email.getText().toString().equals("") && password.getText().toString().equals(""))
-                    openActivity2();
-                else {
-                    Toast.makeText(getBaseContext(), "Email sau parola gresita", Toast.LENGTH_LONG).show();
-                }
+        buttonLogin.setOnClickListener(view->{
+                if(userModel.getEmail().equals("flaviumircia15@gmail.com") && userModel.getPassword().equals("testlogin"))
+                    startActivity(new Intent(this, MeniuMap.class));
+                else if(userModel.getEmail().equalsIgnoreCase(""))
+                    email.setError("Email field can NOT be empty!");
+                else if(userModel.getPassword().equalsIgnoreCase(""))
+                    password.setError("Password field can NOT be empty!");
+        });
 
-
-            }
-        };
-        View.OnClickListener listener=new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openSignUpActivity();
-            }
-        };
-        buttonSignup.setOnClickListener(listener);
-        buttonLogin.setOnClickListener(listener2);
-
-    }
-    public void openActivity2(){
-        Intent intent=new Intent(this,meniu_map.class);
-        startActivity(intent);
-    }
-    public void openSignUpActivity(){
-        Intent intent2=new Intent(this, sign_up.class);
-        startActivity(intent2);
+        buttonSignup.setOnClickListener(view->{
+            startActivity(new Intent(this,SignUp.class));
+        });
     }
 
 }
