@@ -14,6 +14,7 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.Gravity;
@@ -23,18 +24,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.appscss.R;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.security.Provider;
 import java.util.List;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
@@ -42,18 +33,25 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 import static androidx.core.location.LocationManagerCompat.isLocationEnabled;
 
-public class meniu_map extends FragmentActivity implements OnMapReadyCallback {
+import org.osmdroid.config.Configuration;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapController;
+import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
+import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
+
+public class meniu_map extends FragmentActivity  {
     private static final String TAG = "";
     private static final int REQUEST_LOCATION_PERMISSION = 1;
-    private GoogleMap mMap;
     private TextView coordinates;
     LocationManager locationManager;
-
+    private MapView mapView;
     Location arg1 = null;
     public double latitude;
     public double longitude;
     private Object FusedLocationProviderClient;
-
+    MyLocationNewOverlay locationOverlay;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,7 +63,24 @@ public class meniu_map extends FragmentActivity implements OnMapReadyCallback {
         Context conext = getApplicationContext();
         CharSequence texts="No other user found";
         int duration = Toast.LENGTH_SHORT;
-
+        Context ctx = getApplicationContext();
+        Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
+        mapView=findViewById(R.id.frameMapLayout);
+        mapView.setTileSource(TileSourceFactory.MAPNIK);
+        GeoPoint startPoint = new GeoPoint(44.439663, 26.096306);
+        MapController mapController=new MapController(mapView);
+        mapController.setCenter(startPoint);
+        mapController.setZoom(11);
+        GpsMyLocationProvider provider = new GpsMyLocationProvider(this);
+        provider.addLocationSource(LocationManager.NETWORK_PROVIDER);
+        locationOverlay= new MyLocationNewOverlay(mapView);
+        locationOverlay.enableFollowLocation();
+        locationOverlay.runOnFirstFix(new Runnable() {
+            public void run() {
+                Log.d("MyTag", String.format("First location fix: %s", locationOverlay.getLastFix()));
+            }
+        });
+        mapView.getOverlayManager().add(locationOverlay);
         View.OnClickListener meniuMapListener=new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -81,9 +96,7 @@ public class meniu_map extends FragmentActivity implements OnMapReadyCallback {
         sendMsg.setOnClickListener(meniuMapListener);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+
 
     }
 
@@ -106,44 +119,22 @@ public class meniu_map extends FragmentActivity implements OnMapReadyCallback {
     }
 
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-
-        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestLocationPermission();
-            return;
-        }
-
-        Location location =locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        if (location != null) {
-            latitude = location.getLatitude();
-            longitude = location.getLongitude();
-        }
-        else{
-            //This is what you need:
-            Log.d(TAG, "onMapReady: NULL BA");
-        }
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(latitude,longitude);
-        
-        String coordonate = latitude +","+longitude;
-        coordinates = (TextView) findViewById(R.id.coordinates);
-        coordinates.append(coordonate);
-
-        mMap.addMarker(new MarkerOptions().position(sydney).title("I am here").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+    protected void onPause() {
+        super.onPause();
+        super.onResume();
+        //add
+        locationOverlay.disableMyLocation();
     }
 
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //if you make changes to the configuration, use
+        //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        //Configuration.getInstance().save(this, prefs);
+        Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this));
+        //add
+        locationOverlay.enableMyLocation();
+    }
 }
