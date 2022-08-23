@@ -9,6 +9,8 @@ My first Android application ever, presented on "Scientific Communications Sessi
    Something like delivery app, but with no payment included (basically good old volunteering)
    
    Because the time was short and I couldn't do all the features neccessary for the app to work. So I built the an UI that shows your coordinates on the world map.
+   
+   At least is respecting the SOLID principles ¯\_(ツ)_/¯
   
      
 ## The UI
